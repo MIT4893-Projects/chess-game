@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Blend for Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chess-game", "chess-game\chess-game\chess-game.csproj", "{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Debug|ARM64.Build.0 = Debug|ARM64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Debug|x64.ActiveCfg = Debug|x64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Debug|x64.Build.0 = Debug|x64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Debug|x86.ActiveCfg = Debug|x86
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Debug|x86.Build.0 = Debug|x86
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Release|ARM64.ActiveCfg = Release|ARM64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Release|ARM64.Build.0 = Release|ARM64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Release|x64.ActiveCfg = Release|x64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Release|x64.Build.0 = Release|x64
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Release|x86.ActiveCfg = Release|x86
+		{FE3E1829-279D-4159-BC6D-D6BA1F55ABA2}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E5F22BEF-863C-4A28-8194-CFA2D32F91A2}
+	EndGlobalSection
+EndGlobal
