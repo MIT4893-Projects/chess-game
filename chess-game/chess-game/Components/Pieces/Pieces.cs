@@ -15,7 +15,7 @@ namespace chess_game.Components.Pieces
         public int RowPosition { get; private set; } = 0;
         public int ColumnPosition { get; private set; } = 0;
 
-        public Piece() : base()
+        public Piece()
         {
             HorizontalAlignment = HorizontalAlignment.Stretch;
             VerticalAlignment = VerticalAlignment.Stretch;
@@ -44,64 +44,28 @@ namespace chess_game.Components.Pieces
 
     static class PieceImageIcon
     {
-        public static readonly Image BlackBishop = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/BlackBishop.png"))
-        };
+        public static readonly Uri BlackBishop = new("ms-appx:///Images/BlackBishop.png");
 
-        public static readonly Image BlackKing = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/BlackKing.png"))
-        };
+        public static readonly Uri BlackKing = new("ms-appx:///Images/BlackKing.png");
 
-        public static readonly Image BlackKnight = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/BlackKnight.png"))
-        };
+        public static readonly Uri BlackKnight = new("ms-appx:///Images/BlackKnight.png");
 
-        public static readonly Image BlackPawn = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/BlackPawn.png"))
-        };
+        public static readonly Uri BlackPawn = new("ms-appx:///Images/BlackPawn.png");
 
-        public static readonly Image BlackQueen = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/BlackQueen.png"))
-        };
+        public static readonly Uri BlackQueen = new("ms-appx:///Images/BlackQueen.png");
 
-        public static readonly Image BlackRook = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/BlackRook.png"))
-        };
+        public static readonly Uri BlackRook = new("ms-appx:///Images/BlackRook.png");
 
-        public static readonly Image WhiteBishop = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/WhiteBishop.png"))
-        };
+        public static readonly Uri WhiteBishop = new("ms-appx:///Images/WhiteBishop.png");
 
-        public static readonly Image WhiteKing = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/WhiteKing.png"))
-        };
+        public static readonly Uri WhiteKing = new("ms-appx:///Images/WhiteKing.png");
 
-        public static readonly Image WhiteKnight = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/WhiteKnight.png"))
-        };
+        public static readonly Uri WhiteKnight = new("ms-appx:///Images/WhiteKnight.png");
 
-        public static readonly Image WhitePawn = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/WhitePawn.png"))
-        };
+        public static readonly Uri WhitePawn = new("ms-appx:///Images/WhitePawn.png");
 
-        public static readonly Image WhiteQueen = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/WhiteQueen.png"))
-        };
+        public static readonly Uri WhiteQueen = new("ms-appx:///Images/WhiteQueen.png");
 
-        public static readonly Image WhiteRook = new()
-        {
-            Source = new BitmapImage(new Uri("ms-appx:///Images/WhiteRook.png"))
-        };
+        public static readonly Uri WhiteRook = new("ms-appx:///Images/WhiteRook.png");
     }
 }

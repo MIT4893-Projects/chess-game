@@ -18,7 +18,7 @@ namespace chess_game.Components.Pieces
     {
         public BlackPawn()
         {
-            Content = PieceImageIcon.BlackPawn;
+            Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackPawn) };
         }
     }
 
@@ -26,7 +26,7 @@ namespace chess_game.Components.Pieces
     {
         public WhitePawn()
         {
-            Content = PieceImageIcon.WhitePawn;
+            Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhitePawn) };
         }
     }
 }

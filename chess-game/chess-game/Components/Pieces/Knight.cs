@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +16,7 @@ namespace chess_game.Components.Pieces
     {
         public BlackKnight()
         {
-            Content = PieceImageIcon.BlackKnight;
+            Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackKnight) };
         }
     }
 
@@ -22,7 +24,7 @@ namespace chess_game.Components.Pieces
     {
         public WhiteKnight()
         {
-            Content = PieceImageIcon.WhiteKnight;
+            Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhiteKnight) };
         }
     }
 }
