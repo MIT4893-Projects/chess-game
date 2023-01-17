@@ -9,4 +9,20 @@ namespace chess_game.Components.Pieces
     internal class Bishop : Piece
     {
     }
+
+    sealed class BlackBishop : Bishop
+    {
+        public BlackBishop()
+        {
+            Content = PieceImageIcon.BlackBishop;
+        }
+    }
+
+    sealed class WhiteBishop : Bishop
+    {
+        public WhiteBishop()
+        {
+            Content = PieceImageIcon.WhiteBishop;
+        }
+    }
 }

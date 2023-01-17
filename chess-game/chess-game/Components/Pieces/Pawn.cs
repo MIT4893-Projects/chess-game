@@ -12,9 +12,21 @@ namespace chess_game.Components.Pieces
 {
     internal class Pawn : Piece
     {
-        public Pawn() : base()
+    }
+
+    sealed class BlackPawn : Pawn
+    {
+        public BlackPawn()
         {
             Content = PieceImageIcon.BlackPawn;
+        }
+    }
+
+    sealed class WhitePawn : Pawn
+    {
+        public WhitePawn()
+        {
+            Content = PieceImageIcon.WhitePawn;
         }
     }
 }
