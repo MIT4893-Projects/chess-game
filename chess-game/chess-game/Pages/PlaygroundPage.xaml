@@ -13,6 +13,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <components:ChessBoard/>
+        <components:ChessBoardGrid/>
     </Grid>
 </Page>
