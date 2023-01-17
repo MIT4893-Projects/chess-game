@@ -19,7 +19,7 @@ namespace chess_game.Components
 {
     internal class ChessBoardGrid : Grid
     {
-        private ChessBoard Board;
+        private readonly ChessBoard Board;
 
         public ChessBoardGrid()
         {
@@ -54,8 +54,6 @@ namespace chess_game.Components
             InitRowsAndColumns();
             InitBindings();
             FillCellsColor();
-
-            AddElement(new Pawn(), 0, 0);
         }
 
         private void InitAlignments()
@@ -126,7 +124,7 @@ namespace chess_game.Components
 
     internal class ChessBoardDataContext : DataContext
     {
-        private ChessBoard ParentElement;
+        private readonly ChessBoard ParentElement;
         public ChessBoardDataContext(ChessBoard parentElement)
         {
             ParentElement = parentElement;
