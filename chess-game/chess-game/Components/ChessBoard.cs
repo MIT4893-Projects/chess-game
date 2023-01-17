@@ -84,6 +84,7 @@ namespace chess_game.Components
         #region Attributes and properties
 
         public readonly ChessBoardGrid ParentGrid;
+        public readonly ChessBoardController Controller;
 
         #endregion
 
@@ -102,7 +103,10 @@ namespace chess_game.Components
             InitRowsAndColumns();
             InitBindings();
             FillCellsColor();
+        
+            Controller = new(this);
         }
+
 
         /// <summary>
         /// Initialize Alignments for ChessBoard.
@@ -166,7 +170,7 @@ namespace chess_game.Components
         /// <param name="element">Element to add to ChessBoard</param>
         /// <param name="row">Row index</param>
         /// <param name="col">Column index</param>
-        private void AddElement(FrameworkElement element, int row, int col)
+        public void AddElement(FrameworkElement element, int row, int col)
         {
             Children.Add(element);
             PlaceElement(element, row, col);
@@ -178,7 +182,7 @@ namespace chess_game.Components
         /// <param name="element"></param>
         /// <param name="row"></param>
         /// <param name="col"></param>
-        private static void PlaceElement(FrameworkElement element, int row, int col)
+        public void PlaceElement(FrameworkElement element, int row, int col)
         {
             SetRow(element, row);
             SetColumn(element, col);
