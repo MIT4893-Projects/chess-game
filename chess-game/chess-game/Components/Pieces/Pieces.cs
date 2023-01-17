@@ -25,12 +25,14 @@ namespace chess_game.Components.Pieces
         {
             if (0 <= value && value < 8)
                 RowPosition = value;
+            Grid.SetRow(this, RowPosition);
         }
 
         public void SetColumnPosition(int value)
         {
             if (0 <= value && value < 8)
                 ColumnPosition = value;
+            Grid.SetColumn(this, ColumnPosition);
         }
 
         public void SetRowColumnPosition(int row, int col)
