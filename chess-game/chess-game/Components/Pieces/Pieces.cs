@@ -14,7 +14,7 @@ namespace chess_game.Components.Pieces
 {
     internal class Piece : ToggleButton
     {
-        protected readonly bool IsBlackTeam = true;
+        public readonly bool IsBlackTeam;
         protected readonly ChessBoardController Controller;
         public int RowPosition { get; private set; } = 0;
         public int ColumnPosition { get; private set; } = 0;
@@ -57,10 +57,21 @@ namespace chess_game.Components.Pieces
         private void OnClick(object sender, RoutedEventArgs e)
         {
             if ((bool)IsChecked)
-                if (Controller.HaveWaitingPiece())
+            {
+                if (IsACaptureMove())
                     Controller.RequestCapturePieceAtCell(RowPosition, ColumnPosition);
                 else
                     Controller.WaitForMove(RowPosition, ColumnPosition);
+            }
+            else
+            {
+                Controller.MakeNoPieceIsWaiting();
+            }
+        }
+
+        private bool IsACaptureMove()
+        {
+            return Controller.HaveWaitingPiece() && Controller.IsWaitingPieceIsBlackTeam() != IsBlackTeam;
         }
 
         #endregion

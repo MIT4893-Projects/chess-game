@@ -155,6 +155,11 @@ namespace chess_game.Components
             return PieceIsWaitingForMoveRowIndex != -1 && PieceIsWaitingForMoveColIndex != -1;
         }
 
+        public bool IsWaitingPieceIsBlackTeam()
+        {
+            return PiecesMatrix[PieceIsWaitingForMoveRowIndex][PieceIsWaitingForMoveColIndex].IsBlackTeam;
+        }
+
         /// <summary>
         /// Request a piece is waiting for a move and mark all other pieces are not waiting.
         /// </summary>
@@ -215,7 +220,7 @@ namespace chess_game.Components
 
         /// <summary>
         /// Move piece to different cell.
-        /// </summary>\
+        /// </summary>
         /// <param name="newRowPosition">Row index of targer cell to move</param>
         /// <param name="newColumnPosition">Column index of targer cell to move</param>
         public void MovePiece(int newRowPosition, int newColumnPosition)
@@ -229,7 +234,7 @@ namespace chess_game.Components
             MakeNoPieceIsWaiting();
         }
 
-        private void MakeNoPieceIsWaiting()
+        public void MakeNoPieceIsWaiting()
         {
             PieceIsWaitingForMoveRowIndex = -1;
             PieceIsWaitingForMoveColIndex = -1;
