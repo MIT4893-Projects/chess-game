@@ -24,6 +24,7 @@ namespace chess_game.Components.Pieces
             Controller = parentChessBoardController;
             IsBlackTeam = isBlack;
 
+            StyleModifier.MakeCornersSquare(this);
             StyleModifier.MakeBackgroundTransparent(this);
             StyleModifier.NoMarginAndPadding(this);
             StyleModifier.SetAlignment(this, HorizontalAlignment.Stretch, VerticalAlignment.Stretch);
