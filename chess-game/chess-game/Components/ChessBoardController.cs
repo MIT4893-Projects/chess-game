@@ -139,6 +139,11 @@ namespace chess_game.Components
             ParentChessBoard.PlaceElement(piece, row, col);
         }
 
+        /// <summary>
+        /// Remove piece with specified row and column index out of board.
+        /// </summary>
+        /// <param name="row">Piece to remove's row index</param>
+        /// <param name="col">Piece to remove's column index</param>
         public void RemovePiece(int row, int col)
         {
             ParentChessBoard.Children.Remove(PiecesMatrix[row][col]);
@@ -150,11 +155,19 @@ namespace chess_game.Components
 
         #region Request and perform a move
 
+        /// <summary>
+        /// Check if there is a waiting piece.
+        /// </summary>
+        /// <returns>A boolean represent this is a waiting piece or not</returns>
         public bool HaveWaitingPiece()
         {
             return PieceIsWaitingForMoveRowIndex != -1 && PieceIsWaitingForMoveColIndex != -1;
         }
 
+        /// <summary>
+        /// Check current waiting piece is in the black team or not.
+        /// </summary>
+        /// <returns>A boolean represent this is a black team's piece or not</returns>
         public bool IsWaitingPieceIsBlackTeam()
         {
             return PiecesMatrix[PieceIsWaitingForMoveRowIndex][PieceIsWaitingForMoveColIndex].IsBlackTeam;
@@ -191,13 +204,18 @@ namespace chess_game.Components
         /// <summary>
         /// Uncheck piece when moved.
         /// </summary>
-        /// <param name="pieceRowIndex"></param>
-        /// <param name="pieceColIndex"></param>
+        /// <param name="pieceRowIndex">Piece to uncheck's row index</param>
+        /// <param name="pieceColIndex">Piece to uncheck's column index</param>
         private void MarkThisPieceNotCheckedAfterMove(int pieceRowIndex, int pieceColIndex)
         {
             PiecesMatrix[pieceRowIndex][pieceColIndex].IsChecked = false;
         }
 
+        /// <summary>
+        /// Request a capture from waiting piece to target opponent's piece.
+        /// </summary>
+        /// <param name="targetCellRowPosition">Row index of target opponent's piece</param>
+        /// <param name="targetCellColPosition">Column index of target opponent's piece</param>
         public void RequestCapturePieceAtCell(int targetCellRowPosition, int targetCellColPosition)
         {
             RemovePiece(targetCellRowPosition, targetCellColPosition);
@@ -234,6 +252,9 @@ namespace chess_game.Components
             MakeNoPieceIsWaiting();
         }
 
+        /// <summary>
+        /// Make current waiting piece is not waiting.
+        /// </summary>
         public void MakeNoPieceIsWaiting()
         {
             PieceIsWaitingForMoveRowIndex = -1;
