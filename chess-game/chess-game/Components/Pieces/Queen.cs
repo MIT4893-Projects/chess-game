@@ -10,11 +10,12 @@ namespace chess_game.Components.Pieces
 {
     internal class Queen : Piece
     {
+        public Queen(ChessBoardController controller) : base(controller) { }
     }
 
     sealed class BlackQueen : Queen
     {
-        public BlackQueen()
+        public BlackQueen(ChessBoardController controller) : base(controller)
         {
             Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackQueen) };
         }
@@ -22,7 +23,7 @@ namespace chess_game.Components.Pieces
 
     sealed class WhiteQueen : Queen
     {
-        public WhiteQueen()
+        public WhiteQueen(ChessBoardController controller) : base(controller)
         {
             Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhiteQueen) };
         }

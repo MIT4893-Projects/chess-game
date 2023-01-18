@@ -1,6 +1,8 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,15 +12,19 @@ using System.Threading.Tasks;
 
 namespace chess_game.Components.Pieces
 {
-    internal class Piece : Button
+    internal class Piece : ToggleButton
     {
+        protected readonly ChessBoardController Controller;
         public int RowPosition { get; private set; } = 0;
         public int ColumnPosition { get; private set; } = 0;
 
-        public Piece()
+        public Piece(ChessBoardController parentChessBoardController)
         {
-            HorizontalAlignment = HorizontalAlignment.Stretch;
-            VerticalAlignment = VerticalAlignment.Stretch;
+            Controller = parentChessBoardController;
+
+            StyleModifier.MakeBackgroundTransparent(this);
+            StyleModifier.NoMarginAndPadding(this);
+            StyleModifier.SetAlignment(this, HorizontalAlignment.Stretch, VerticalAlignment.Stretch);
         }
 
         public void SetRowPosition(int value)
