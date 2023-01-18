@@ -16,6 +16,7 @@ namespace chess_game.Components.Pieces
     {
         private static readonly SolidColorBrush TransparentBackground = new(Colors.Transparent);
         private static readonly Thickness NoThickness = new(0.0);
+        private static readonly CornerRadius NoCornerRadius = new(0.0);
 
         #region Background
 
@@ -80,6 +81,15 @@ namespace chess_game.Components.Pieces
         {
             SetAlignment(element, horizontalAlignmentType);
             SetAlignment(element, verticalAlignmentType);
+        }
+
+        #endregion
+
+        #region Corner radius
+
+        public static void MakeCornersSquare(Control element)
+        {
+            element.CornerRadius = NoCornerRadius;
         }
 
         #endregion
