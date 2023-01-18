@@ -57,7 +57,10 @@ namespace chess_game.Components.Pieces
         private void OnClick(object sender, RoutedEventArgs e)
         {
             if ((bool)IsChecked)
-                Controller.WaitForMove(RowPosition, ColumnPosition);
+                if (Controller.HaveWaitingPiece())
+                    Controller.RequestCapturePieceAtCell(RowPosition, ColumnPosition);
+                else
+                    Controller.WaitForMove(RowPosition, ColumnPosition);
         }
 
         #endregion

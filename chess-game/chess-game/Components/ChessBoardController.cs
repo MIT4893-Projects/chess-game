@@ -139,9 +139,21 @@ namespace chess_game.Components
             ParentChessBoard.PlaceElement(piece, row, col);
         }
 
+        public void RemovePiece(int row, int col)
+        {
+            ParentChessBoard.Children.Remove(PiecesMatrix[row][col]);
+            PiecesOnBoard.Remove(PiecesMatrix[row][col]);
+            PiecesMatrix[row][col] = null;
+        }
+
         #endregion
 
         #region Request and perform a move
+
+        public bool HaveWaitingPiece()
+        {
+            return PieceIsWaitingForMoveRowIndex != -1 && PieceIsWaitingForMoveColIndex != -1;
+        }
 
         /// <summary>
         /// Request a piece is waiting for a move and mark all other pieces are not waiting.
@@ -181,25 +193,29 @@ namespace chess_game.Components
             PiecesMatrix[pieceRowIndex][pieceColIndex].IsChecked = false;
         }
 
+        public void RequestCapturePieceAtCell(int targetCellRowPosition, int targetCellColPosition)
+        {
+            RemovePiece(targetCellRowPosition, targetCellColPosition);
+            RequestMovePieceToCell(targetCellRowPosition, targetCellColPosition);
+        }
+
         /// <summary>
         /// Move waiting piece to triggerred cell.
         /// </summary>
-        /// <param name="targetRowPosition">Triggerred's cell row position</param>
-        /// <param name="targetColPosition">Triggerred's cell column position</param>
-        public void RequestMovePieceToCell(int targetRowPosition, int targetColPosition)
+        /// <param name="targetCellRowPosition">Triggerred's cell row position</param>
+        /// <param name="targetCellColPosition">Triggerred's cell column position</param>
+        public void RequestMovePieceToCell(int targetCellRowPosition, int targetCellColPosition)
         {
-            if (PieceIsWaitingForMoveRowIndex != -1 && PieceIsWaitingForMoveColIndex != -1)
+            if (HaveWaitingPiece())
             {
-                MovePiece(targetRowPosition, targetColPosition);
-                MarkThisPieceNotCheckedAfterMove(targetRowPosition, targetColPosition);
+                MovePiece(targetCellRowPosition, targetCellColPosition);
+                MarkThisPieceNotCheckedAfterMove(targetCellRowPosition, targetCellColPosition);
             }
         }
 
         /// <summary>
         /// Move piece to different cell.
-        /// </summary>
-        /// <param name="lastRowPosition">Row index of piece to move</param>
-        /// <param name="lastColumnPosition">Column index of piece to move</param>
+        /// </summary>\
         /// <param name="newRowPosition">Row index of targer cell to move</param>
         /// <param name="newColumnPosition">Column index of targer cell to move</param>
         public void MovePiece(int newRowPosition, int newColumnPosition)
@@ -215,8 +231,8 @@ namespace chess_game.Components
 
         private void MakeNoPieceIsWaiting()
         {
-            PieceIsWaitingForMoveRowIndex = 0;
-            PieceIsWaitingForMoveColIndex = 0;
+            PieceIsWaitingForMoveRowIndex = -1;
+            PieceIsWaitingForMoveColIndex = -1;
         }
 
         #endregion
