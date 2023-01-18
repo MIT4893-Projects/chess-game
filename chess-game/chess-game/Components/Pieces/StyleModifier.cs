@@ -9,11 +9,9 @@ namespace chess_game.Components.Pieces
 {
     static class StyleModifier
     {
-        private static readonly SolidColorBrush TransparentBackground = new(Colors.Transparent);
-        private static readonly Thickness NoThickness = new(0.0);
-        private static readonly CornerRadius NoCornerRadius = new(0.0);
-
         #region Background
+
+        private static readonly SolidColorBrush TransparentBackground = new(Colors.Transparent);
 
         /// <summary>
         /// Set element's background to transparent color.
@@ -53,6 +51,8 @@ namespace chess_game.Components.Pieces
         #endregion
 
         #region Margins and Paddings
+
+        private static readonly Thickness NoThickness = new(0.0);
 
         /// <summary>
         /// Make element have no margins.
@@ -123,6 +123,8 @@ namespace chess_game.Components.Pieces
         #endregion
 
         #region Corner radius
+
+        private static readonly CornerRadius NoCornerRadius = new(0.0);
 
         /// <summary>
         /// Make element's corners square.
