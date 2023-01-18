@@ -12,7 +12,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-
 using chess_game.Components.Pieces;
 
 namespace chess_game.Components
@@ -76,8 +75,18 @@ namespace chess_game.Components
         #endregion
     }
 
+    internal class ChessBoardCell : Button
+    {
+        public ChessBoardCell()
+        {
+            StyleModifier.MakeBackgroundTransparent(this);
+            StyleModifier.NoMarginAndPadding(this);
+            StyleModifier.SetAlignment(this, HorizontalAlignment.Stretch, VerticalAlignment.Stretch);
+        }
+    }
+
     /// <summary>
-    /// Create a ChessBoard wrap in ChessBoardGrid
+    /// Create a ChessBoard wrap in a ChessBoardGrid
     /// </summary>
     internal class ChessBoard : Grid
     {
@@ -99,22 +108,14 @@ namespace chess_game.Components
             DataContext = new ChessBoardDataContext(this);
             ParentGrid = parentGrid;
 
-            InitAlignments();
             InitRowsAndColumns();
+            InitCells();
             InitBindings();
-            FillCellsColor();
-        
+
+            StyleModifier.SetAlignment(this, HorizontalAlignment.Center, VerticalAlignment.Center);
+            StyleModifier.SetImageBackground(this, "Images/background.png");
+
             Controller = new(this);
-        }
-
-
-        /// <summary>
-        /// Initialize Alignments for ChessBoard.
-        /// </summary>
-        private void InitAlignments()
-        {
-            HorizontalAlignment = HorizontalAlignment.Center;
-            VerticalAlignment = VerticalAlignment.Center;
         }
 
         /// <summary>
@@ -130,34 +131,26 @@ namespace chess_game.Components
         }
 
         /// <summary>
+        /// Initialize all cells in ChessBoard.
+        /// </summary>
+        private void InitCells()
+        {
+            for (int row = 0; row < 8; ++row)
+            {
+                for (int col = 0; col < 8; ++col)
+                {
+                    AddElement(new ChessBoardCell(), row, col);
+                }
+            }
+        }
+
+        /// <summary>
         /// Initialize size's bindings to make ChessBoard square.
         /// </summary>
         private void InitBindings()
         {
             BindingOperations.SetBinding(this, HeightProperty, new Binding() { Path = new PropertyPath("Height") });
             BindingOperations.SetBinding(this, WidthProperty, new Binding() { Path = new PropertyPath("Width") });
-        }
-
-        /// <summary>
-        /// Fill colors to every cells in ChessBoard
-        /// </summary>
-        private void FillCellsColor()
-        {
-            SolidColorBrush black = new(Colors.Black);
-            SolidColorBrush white = new(Colors.White);
-
-            for (int row = 0; row < RowDefinitions.Count; ++row)
-            {
-                for (int col = 0; col < ColumnDefinitions.Count; ++col)
-                {
-                    Rectangle CellBackground = new()
-                    {
-                        Fill = ((row + col) % 2 == 0) ? white : black
-                    };
-
-                    AddElement(CellBackground, row, col);
-                }
-            }
         }
 
         #endregion
