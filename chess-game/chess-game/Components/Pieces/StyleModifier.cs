@@ -1,14 +1,9 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace chess_game.Components.Pieces
 {
@@ -20,11 +15,20 @@ namespace chess_game.Components.Pieces
 
         #region Background
 
+        /// <summary>
+        /// Set element's background to transparent color.
+        /// </summary>
+        /// <param name="element">Element to set background</param>
         public static void MakeBackgroundTransparent(Control element)
         {
             element.Background = TransparentBackground;
         }
 
+        /// <summary>
+        /// Set element's background to an image with relative path for elements inherited from Control.
+        /// </summary>
+        /// <param name="element">Element to set image background</param>
+        /// <param name="imagePath">Relative path to the image</param>
         public static void SetImageBackground(Control element, string imagePath)
         {
             string path = string.Format("ms-appx:///{0}", imagePath);
@@ -33,6 +37,11 @@ namespace chess_game.Components.Pieces
             element.Background = new ImageBrush() { ImageSource = backgroundImage };
         }
 
+        /// <summary>
+        /// Set element's background to an image with relative path for elements inherited from Panel.
+        /// </summary>
+        /// <param name="element">Element to set image background</param>
+        /// <param name="imagePath">Relative path to the image</param>
         public static void SetImageBackground(Panel element, string imagePath)
         {
             string path = string.Format("ms-appx:///{0}", imagePath);
@@ -45,16 +54,28 @@ namespace chess_game.Components.Pieces
 
         #region Margins and Paddings
 
+        /// <summary>
+        /// Make element have no margins.
+        /// </summary>
+        /// <param name="element">Element to remove margins</param>
         public static void NoMargin(Control element)
         {
             element.Margin = NoThickness;
         }
 
+        /// <summary>
+        /// Make element have no paddings.
+        /// </summary>
+        /// <param name="element">Element to remove paddings</param>
         public static void NoPadding(Control element)
         {
             element.Padding = NoThickness;
         }
 
+        /// <summary>
+        /// Make element have no margins and paddings.
+        /// </summary>
+        /// <param name="element">Element to remove margins and paddings</param>
         public static void NoMarginAndPadding(Control element)
         {
             NoMargin(element);
@@ -65,18 +86,34 @@ namespace chess_game.Components.Pieces
 
         #region Alignments
 
+        /// <summary>
+        /// Set element's horizontal alignment.
+        /// </summary>
+        /// <param name="element">Element to set horizontal alignment</param>
+        /// <param name="alignmentType">Horizontal alignment type</param>
         public static void SetAlignment(FrameworkElement element, HorizontalAlignment alignmentType)
         {
             element.HorizontalAlignment = alignmentType;
         }
 
+        /// <summary>
+        /// Set element's vertical alignment.
+        /// </summary>
+        /// <param name="element">Element to set vertical alignment</param>
+        /// <param name="alignmentType">Vertical alignment type</param>
         public static void SetAlignment(FrameworkElement element, VerticalAlignment alignmentType)
         {
             element.VerticalAlignment = alignmentType;
         }
 
+        /// <summary>
+        /// Set element's horizontal and vertical alignment.
+        /// </summary>
+        /// <param name="element">Element to set horizontal and vertical alignment</param>
+        /// <param name="horizontalAlignmentType">Horizontal and alignment type</param>
+        /// <param name="verticalAlignmentType">Vertical and alignment type</param>
         public static void SetAlignment(FrameworkElement element,
-                                        HorizontalAlignment horizontalAlignmentType,
+                                        HorizontalAlignment horizontalAlignmentType ,
                                         VerticalAlignment verticalAlignmentType)
         {
             SetAlignment(element, horizontalAlignmentType);
@@ -87,6 +124,10 @@ namespace chess_game.Components.Pieces
 
         #region Corner radius
 
+        /// <summary>
+        /// Make element's corners square.
+        /// </summary>
+        /// <param name="element">Element to square corners.</param>
         public static void MakeCornersSquare(Control element)
         {
             element.CornerRadius = NoCornerRadius;
