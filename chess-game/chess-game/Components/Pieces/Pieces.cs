@@ -14,17 +14,21 @@ namespace chess_game.Components.Pieces
 {
     internal class Piece : ToggleButton
     {
+        protected readonly bool IsBlackTeam = true;
         protected readonly ChessBoardController Controller;
         public int RowPosition { get; private set; } = 0;
         public int ColumnPosition { get; private set; } = 0;
 
-        public Piece(ChessBoardController parentChessBoardController)
+        public Piece(ChessBoardController parentChessBoardController, bool isBlack)
         {
             Controller = parentChessBoardController;
+            IsBlackTeam = isBlack;
 
             StyleModifier.MakeBackgroundTransparent(this);
             StyleModifier.NoMarginAndPadding(this);
             StyleModifier.SetAlignment(this, HorizontalAlignment.Stretch, VerticalAlignment.Stretch);
+
+            Click += OnClick;
         }
 
         public void SetRowPosition(int value)
@@ -46,6 +50,16 @@ namespace chess_game.Components.Pieces
             SetRowPosition(row);
             SetColumnPosition(col);
         }
+
+        #region Event handlers
+
+        private void OnClick(object sender, RoutedEventArgs e)
+        {
+            if ((bool)IsChecked)
+                Controller.WaitForMove(RowPosition, ColumnPosition);
+        }
+
+        #endregion
     }
 
     static class PieceImageIcon

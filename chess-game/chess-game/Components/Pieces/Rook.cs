@@ -10,24 +10,14 @@ using Windows.Gaming.Input.Custom;
 
 namespace chess_game.Components.Pieces
 {
-    internal class Rook : Piece
+    sealed class Rook : Piece
     {
-        public Rook(ChessBoardController controller) : base(controller) { }
-    }
-
-    sealed class BlackRook : Rook
-    {
-        public BlackRook(ChessBoardController controller) : base(controller)
+        public Rook(ChessBoardController controller, bool isBlack) : base(controller, isBlack)
         {
-            Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackRook) };
-        }
-    }
-
-    sealed class WhiteRook : Rook
-    {
-        public WhiteRook(ChessBoardController controller) : base(controller)
-        {
-            Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhiteRook) };
+            if (isBlack)
+                Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackRook) };
+            else
+                Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhiteRook) };
         }
     }
 }

@@ -20,7 +20,7 @@ namespace chess_game.Components
     /// Control which wrap around the ChessBoard to make ChessBoard square. ChessBoard size
     /// based on this control's size.
     /// </summary>
-    internal class ChessBoardGrid : Grid
+    sealed class ChessBoardGrid : Grid
     {
         #region Attributes and Properties
 
@@ -75,20 +75,38 @@ namespace chess_game.Components
         #endregion
     }
 
-    internal class ChessBoardCell : Button
+    sealed class ChessBoardCell : Button
     {
-        public ChessBoardCell()
+        private readonly ChessBoardController Controller;
+        private readonly int RowIndex, ColumnIndex;
+
+        public ChessBoardCell(ChessBoardController controller, int rowIndex, int columnIndex)
         {
+            Controller = controller;
+            RowIndex = rowIndex;
+            ColumnIndex = columnIndex;
             StyleModifier.MakeBackgroundTransparent(this);
             StyleModifier.NoMarginAndPadding(this);
             StyleModifier.SetAlignment(this, HorizontalAlignment.Stretch, VerticalAlignment.Stretch);
+
+            Click += OnClick;
+        }
+
+        private void OnClick(object sender, RoutedEventArgs e)
+        {
+            RequestMoveToThisCell();
+        }
+
+        private void RequestMoveToThisCell()
+        {
+            Controller.RequestMovePieceToCell(RowIndex, ColumnIndex);
         }
     }
 
     /// <summary>
     /// Create a ChessBoard wrap in a ChessBoardGrid
     /// </summary>
-    internal class ChessBoard : Grid
+    sealed class ChessBoard : Grid
     {
         #region Attributes and properties
 
@@ -105,6 +123,8 @@ namespace chess_game.Components
         /// <param name="parentGrid"></param>
         public ChessBoard(ChessBoardGrid parentGrid)
         {
+            Controller = new(this);
+
             DataContext = new ChessBoardDataContext(this);
             ParentGrid = parentGrid;
 
@@ -115,7 +135,7 @@ namespace chess_game.Components
             StyleModifier.SetAlignment(this, HorizontalAlignment.Center, VerticalAlignment.Center);
             StyleModifier.SetImageBackground(this, "Images/background.png");
 
-            Controller = new(this);
+            Controller.InitStartPosition();
         }
 
         /// <summary>
@@ -139,7 +159,7 @@ namespace chess_game.Components
             {
                 for (int col = 0; col < 8; ++col)
                 {
-                    AddElement(new ChessBoardCell(), row, col);
+                    AddElement(new ChessBoardCell(Controller, row, col), row, col);
                 }
             }
         }

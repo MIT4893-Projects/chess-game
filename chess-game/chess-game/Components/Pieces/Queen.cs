@@ -8,24 +8,14 @@ using System.Threading.Tasks;
 
 namespace chess_game.Components.Pieces
 {
-    internal class Queen : Piece
+    sealed class Queen : Piece
     {
-        public Queen(ChessBoardController controller) : base(controller) { }
-    }
-
-    sealed class BlackQueen : Queen
-    {
-        public BlackQueen(ChessBoardController controller) : base(controller)
+        public Queen(ChessBoardController controller, bool isBlack) : base(controller, isBlack)
         {
-            Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackQueen) };
-        }
-    }
-
-    sealed class WhiteQueen : Queen
-    {
-        public WhiteQueen(ChessBoardController controller) : base(controller)
-        {
-            Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhiteQueen) };
+            if (isBlack)
+                Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackQueen) };
+            else
+                Content = new Image() { Source = new BitmapImage(PieceImageIcon.WhiteQueen) };
         }
     }
 }
