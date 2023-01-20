@@ -24,9 +24,9 @@ namespace chess_game.Components.Pieces
             return piece.IsBlackTeam != PiecesMatrix[targetRowIndex][targetColIndex].IsBlackTeam;
         }
 
-        private List<MoveableCell> BlackPawnMoveableCell(Piece pawnPiece)
+        private HashSet<MoveableCell> BlackPawnMoveableCell(Piece pawnPiece)
         {
-            List<MoveableCell> moveableCells = new();
+            HashSet<MoveableCell> moveableCells = new();
 
             int PawnRow = pawnPiece.RowPosition;
             int PawnCol = pawnPiece.ColumnPosition;
@@ -58,9 +58,9 @@ namespace chess_game.Components.Pieces
             return moveableCells;
         }
 
-        private List<MoveableCell> WhitePawnMoveableCell(Piece pawnPiece) { return new(); }
+        private HashSet<MoveableCell> WhitePawnMoveableCell(Piece pawnPiece) { return new(); }
 
-        public List<MoveableCell> PawnMoveableCells(Piece pawnPiece)
+        public HashSet<MoveableCell> PawnMoveableCells(Piece pawnPiece)
         {
             //
             if (pawnPiece.IsBlackTeam)
