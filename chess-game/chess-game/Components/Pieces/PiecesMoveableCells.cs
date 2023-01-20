@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +19,21 @@ namespace chess_game.Components.Pieces
             Controller = controller;
         }
 
+        private bool IsIndexValid(int index)
+        {
+            return 0 <= index && index < 8;
+        }
+
+        private bool IsRowAndColValid(int rowIndex, int columnIndex)
+        {
+            return IsIndexValid(rowIndex) && IsIndexValid(columnIndex);
+        }
+
+        private string GetCellString(int row, int column)
+        {
+            return new MoveableCell() { Row = row, Column = column }.ToString();
+        }
+
         private bool? IsTargetCellIsOpponent(Piece piece, int targetRowIndex, int targetColIndex)
         {
             if (PiecesMatrix[targetRowIndex][targetColIndex] == null)
@@ -24,48 +41,138 @@ namespace chess_game.Components.Pieces
             return piece.IsBlackTeam != PiecesMatrix[targetRowIndex][targetColIndex].IsBlackTeam;
         }
 
-        private HashSet<MoveableCell> BlackPawnMoveableCell(Piece pawnPiece)
+        private HashSet<string> PawnMoveableCells(Piece pawnPiece)
         {
-            HashSet<MoveableCell> moveableCells = new();
+            HashSet<string> moveableCells = new();
+
+            bool PieceIsBlack = pawnPiece.IsBlackTeam;
+
+            // Black goes down, white goes up by setting this factor.
+            int verticalFactor = (PieceIsBlack) ? 1 : -1;
 
             int PawnRow = pawnPiece.RowPosition;
             int PawnCol = pawnPiece.ColumnPosition;
 
             // If on bottom edge, can't move to anywhere. So return empty list.
-            if (PawnRow == 0)
+            if (PawnRow == ((PieceIsBlack) ? 7 : 0))
                 return moveableCells;
 
+            int FrontSquareRow = PawnRow + 1 * verticalFactor;
             // Pawns can only move forward one square at a time, and the cell in front don't have any pieces.
-            if (IsTargetCellIsOpponent(pawnPiece, PawnRow + 1, PawnCol) == null)
-            {
-                moveableCells.Add(new MoveableCell() { Row = PawnRow + 1, Column = PawnCol });
-
-                // If this is the first move, the pawns can move forward up to two squares.
-                if (!pawnPiece.FirstMovePerformed)
+            if (IsIndexValid(FrontSquareRow))
+                if (IsTargetCellIsOpponent(pawnPiece, FrontSquareRow, PawnCol) == null)
                 {
-                    if (IsTargetCellIsOpponent(pawnPiece, PawnRow + 2, PawnCol) == null)
-                        moveableCells.Add(new MoveableCell() { Row = PawnRow + 2, Column = PawnCol });
+                    moveableCells.Add(GetCellString(FrontSquareRow, PawnCol));
+
+                    // If this is the first move, the pawns can move forward up to two squares.
+                    if (!pawnPiece.FirstMovePerformed)
+                    {
+                        if (IsTargetCellIsOpponent(pawnPiece, PawnRow + 2 * verticalFactor, PawnCol) == null)
+                            moveableCells.Add(GetCellString(PawnRow + 2 * verticalFactor, PawnCol));
+                    }
                 }
-            }
 
             // Pawns can capture one of two squares diagonally in front of them.
-            if (IsTargetCellIsOpponent(pawnPiece, PawnRow + 1, PawnCol - 1) == true)
-                moveableCells.Add(new MoveableCell() { Row = PawnRow + 1, Column = PawnCol - 1 });
+            int DiagonalLeftSquareCol = PawnCol - 1;
+            int DiagonalRightSquareCol = PawnCol + 1;
 
-            if (IsTargetCellIsOpponent(pawnPiece, PawnRow + 1, PawnCol + 1) == true)
-                moveableCells.Add(new MoveableCell() { Row = PawnRow + 1, Column = PawnCol + 1 });
+            if (DiagonalLeftSquareCol >= 0)
+                if (IsTargetCellIsOpponent(pawnPiece, FrontSquareRow, DiagonalLeftSquareCol) == true)
+                    moveableCells.Add(GetCellString(FrontSquareRow, DiagonalLeftSquareCol));
+
+            if (DiagonalRightSquareCol < 8)
+                if (IsTargetCellIsOpponent(pawnPiece, FrontSquareRow, DiagonalRightSquareCol) == true)
+                    moveableCells.Add(GetCellString(FrontSquareRow, DiagonalRightSquareCol));
 
             return moveableCells;
         }
 
-        private HashSet<MoveableCell> WhitePawnMoveableCell(Piece pawnPiece) { return new(); }
-
-        public HashSet<MoveableCell> PawnMoveableCells(Piece pawnPiece)
+        private HashSet<string> RookMoveableCells(Piece rookPiece)
         {
-            //
-            if (pawnPiece.IsBlackTeam)
-                return BlackPawnMoveableCell(pawnPiece);
-            return WhitePawnMoveableCell(pawnPiece);
+            HashSet<string> moveableCells = new();
+            int[] verticalFactors = { 1, -1, 0, 0 };
+            int[] horizontalFactors = { 0, 0, 1, -1 };
+
+            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            {
+                int rowIndex = rookPiece.RowPosition + verticalFactors[factorIdx];
+                int colIndex = rookPiece.ColumnPosition + horizontalFactors[factorIdx];
+                bool canContinueMove = true;
+                while (IsRowAndColValid(rowIndex, colIndex) && canContinueMove)
+                {
+                    switch (IsTargetCellIsOpponent(rookPiece, rowIndex, colIndex))
+                    {
+                        case true:
+                            moveableCells.Add(GetCellString(rowIndex, colIndex));
+                            canContinueMove = false;
+                            break;
+                        case false:
+                            canContinueMove = false;
+                            break;
+                        default:
+                            moveableCells.Add(GetCellString(rowIndex, colIndex));
+                            break;
+                    }
+                    rowIndex += verticalFactors[factorIdx];
+                    colIndex += horizontalFactors[factorIdx];
+                }
+            }
+
+            return moveableCells;
+        }
+
+        private HashSet<string> KnightMoveableCells(Piece rookPiece)
+        {
+            HashSet<string> moveableCells = new();
+
+            return moveableCells;
+        }
+
+        private HashSet<string> BishopMoveableCells(Piece rookPiece)
+        {
+            HashSet<string> moveableCells = new();
+
+            return moveableCells;
+        }
+
+        private HashSet<string> KingMoveableCells(Piece rookPiece)
+        {
+            HashSet<string> moveableCells = new();
+
+            return moveableCells;
+        }
+
+        private HashSet<string> QueenMoveableCells(Piece rookPiece)
+        {
+            HashSet<string> moveableCells = new();
+
+            return moveableCells;
+        }
+
+        public HashSet<string> PieceMoveableCells(Piece pieceIsRequestingToMove)
+        {
+            // Type tester
+            switch (pieceIsRequestingToMove)
+            {
+                case Pawn _:
+                    return PawnMoveableCells(pieceIsRequestingToMove);
+                case Rook _:
+                    return RookMoveableCells(pieceIsRequestingToMove);
+                case Knight _:
+                    return KnightMoveableCells(pieceIsRequestingToMove);
+                case Bishop _:
+                    return BishopMoveableCells(pieceIsRequestingToMove);
+                case King _:
+                    return KingMoveableCells(pieceIsRequestingToMove);
+                case Queen _:
+                    return QueenMoveableCells(pieceIsRequestingToMove);
+            }
+            return new();
+        }
+
+        public HashSet<string> PieceMoveableCells(int pieceIsWaitingRow, int pieceIsWaitingCol)
+        {
+            return PieceMoveableCells(PiecesMatrix[pieceIsWaitingRow][pieceIsWaitingCol]);
         }
     }
 }
