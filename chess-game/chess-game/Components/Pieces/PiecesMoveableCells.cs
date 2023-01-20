@@ -90,61 +90,168 @@ namespace chess_game.Components.Pieces
         private HashSet<string> RookMoveableCells(Piece rookPiece)
         {
             HashSet<string> moveableCells = new();
+
+            //! Rook's row and col positions after moves.
             int[] verticalFactors = { 1, -1, 0, 0 };
             int[] horizontalFactors = { 0, 0, 1, -1 };
 
             for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
             {
-                int rowIndex = rookPiece.RowPosition + verticalFactors[factorIdx];
-                int colIndex = rookPiece.ColumnPosition + horizontalFactors[factorIdx];
+                int targetCellRowPosition = rookPiece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = rookPiece.ColumnPosition + horizontalFactors[factorIdx];
                 bool canContinueMove = true;
-                while (IsRowAndColValid(rowIndex, colIndex) && canContinueMove)
+                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
                 {
-                    switch (IsTargetCellIsOpponent(rookPiece, rowIndex, colIndex))
+                    switch (IsTargetCellIsOpponent(rookPiece, targetCellRowPosition, targetCellColPosition))
                     {
                         case true:
-                            moveableCells.Add(GetCellString(rowIndex, colIndex));
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
                             canContinueMove = false;
                             break;
                         case false:
                             canContinueMove = false;
                             break;
                         default:
-                            moveableCells.Add(GetCellString(rowIndex, colIndex));
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
                             break;
                     }
-                    rowIndex += verticalFactors[factorIdx];
-                    colIndex += horizontalFactors[factorIdx];
+                    targetCellRowPosition += verticalFactors[factorIdx];
+                    targetCellColPosition += horizontalFactors[factorIdx];
                 }
             }
 
             return moveableCells;
         }
 
-        private HashSet<string> KnightMoveableCells(Piece rookPiece)
+        private HashSet<string> KnightMoveableCells(Piece knightPiece)
         {
             HashSet<string> moveableCells = new();
+
+            //! Knight's row and col positions after move.
+            int[] horizontalFactors = { -2, -2, -1, -1, 1, 1, 2, 2 };
+            int[] verticalFactors = { 1, -1, 2, -2, 2, -2, 1, -1 };
+
+            for (int factorIdx = 0; factorIdx < horizontalFactors.Length; ++factorIdx)
+            {
+                int targetCellRowPosition = knightPiece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = knightPiece.ColumnPosition + horizontalFactors[factorIdx];
+
+                if (IsRowAndColValid(targetCellRowPosition, targetCellColPosition))
+                {
+                    switch (IsTargetCellIsOpponent(knightPiece, targetCellRowPosition, targetCellColPosition))
+                    {
+                        case true:
+                        case null:
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                            break;
+                        case false:
+                            break;
+                    }
+                }
+            }
 
             return moveableCells;
         }
 
-        private HashSet<string> BishopMoveableCells(Piece rookPiece)
+        private HashSet<string> BishopMoveableCells(Piece bishopPiece)
         {
             HashSet<string> moveableCells = new();
+
+            //! Bishop's row and col positions after moves.
+            int[] verticalFactors = { 1, -1, -1, 1 };
+            int[] horizontalFactors = { 1, -1, 1, -1 };
+
+            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            {
+                bool canContinueMove = true;
+                int targetCellRowPosition = bishopPiece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = bishopPiece.ColumnPosition + horizontalFactors[factorIdx];
+                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
+                {
+                    switch (IsTargetCellIsOpponent(bishopPiece, targetCellRowPosition, targetCellColPosition))
+                    {
+                        case true:
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                            canContinueMove = false;
+                            break;
+                        case false:
+                            canContinueMove = false;
+                            break;
+                        default:
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                            break;
+                    }
+                    targetCellRowPosition += verticalFactors[factorIdx];
+                    targetCellColPosition += horizontalFactors[factorIdx];
+                }
+            }
 
             return moveableCells;
         }
 
-        private HashSet<string> KingMoveableCells(Piece rookPiece)
+        private HashSet<string> KingMoveableCells(Piece kingPiece)
         {
             HashSet<string> moveableCells = new();
+
+            //! King's row and col positions after moves.
+            int[] verticalFactors = { -1, -1, 0, 1, 1, 1, 0, -1 };
+            int[] horizontalFactors = { 0, 1, 1, 1, 0, -1, -1, -1 };
+
+            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            {
+                int targetCellRowPosition = kingPiece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = kingPiece.ColumnPosition + horizontalFactors[factorIdx];
+
+                if (IsRowAndColValid(targetCellRowPosition, targetCellColPosition))
+                {
+                    switch (IsTargetCellIsOpponent(kingPiece, targetCellRowPosition, targetCellColPosition))
+                    {
+                        case true:
+                        case null:
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                            break;
+                        case false:
+                            break;
+                    }
+                }
+            }
 
             return moveableCells;
         }
 
-        private HashSet<string> QueenMoveableCells(Piece rookPiece)
+        private HashSet<string> QueenMoveableCells(Piece queenPiece)
         {
             HashSet<string> moveableCells = new();
+
+            //! Queen's row and col positions after moves.
+            int[] verticalFactors = { -1, -1, 0, 1, 1, 1, 0, -1 };
+            int[] horizontalFactors = { 0, 1, 1, 1, 0, -1, -1, -1 };
+
+            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            {
+                bool canContinueMove = true;
+                int targetCellRowPosition = queenPiece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = queenPiece.ColumnPosition + horizontalFactors[factorIdx];
+
+                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
+                {
+                    switch (IsTargetCellIsOpponent(queenPiece, targetCellRowPosition, targetCellColPosition))
+                    {
+                        case true:
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                            canContinueMove = false;
+                            break;
+                        case false:
+                            canContinueMove = false;
+                            break;
+                        default:
+                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                            break;
+                    }
+                    targetCellRowPosition += verticalFactors[factorIdx];
+                    targetCellColPosition += horizontalFactors[factorIdx];
+                }
+            }
 
             return moveableCells;
         }
@@ -152,22 +259,16 @@ namespace chess_game.Components.Pieces
         public HashSet<string> PieceMoveableCells(Piece pieceIsRequestingToMove)
         {
             // Type tester
-            switch (pieceIsRequestingToMove)
+            return pieceIsRequestingToMove switch
             {
-                case Pawn _:
-                    return PawnMoveableCells(pieceIsRequestingToMove);
-                case Rook _:
-                    return RookMoveableCells(pieceIsRequestingToMove);
-                case Knight _:
-                    return KnightMoveableCells(pieceIsRequestingToMove);
-                case Bishop _:
-                    return BishopMoveableCells(pieceIsRequestingToMove);
-                case King _:
-                    return KingMoveableCells(pieceIsRequestingToMove);
-                case Queen _:
-                    return QueenMoveableCells(pieceIsRequestingToMove);
-            }
-            return new();
+                Pawn _ => PawnMoveableCells(pieceIsRequestingToMove),
+                Rook _ => RookMoveableCells(pieceIsRequestingToMove),
+                Knight _ => KnightMoveableCells(pieceIsRequestingToMove),
+                Bishop _ => BishopMoveableCells(pieceIsRequestingToMove),
+                King _ => KingMoveableCells(pieceIsRequestingToMove),
+                //! Queen (default case).
+                _ => QueenMoveableCells(pieceIsRequestingToMove),
+            };
         }
 
         public HashSet<string> PieceMoveableCells(int pieceIsWaitingRow, int pieceIsWaitingCol)
