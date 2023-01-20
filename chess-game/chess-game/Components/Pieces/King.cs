@@ -10,7 +10,8 @@ namespace chess_game.Components.Pieces
 {
     sealed class King : Piece
     {
-        public King(ChessBoardController controller, bool isBlack) : base(controller, isBlack)
+        public King(ChessBoardController controller, PiecesMoveableCells MoveableCellsMarker, bool isBlack)
+            : base(controller, MoveableCellsMarker, isBlack)
         {
             if (isBlack)
                 Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackKing) };

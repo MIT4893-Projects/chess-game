@@ -10,7 +10,8 @@ namespace chess_game.Components.Pieces
 {
     sealed class Bishop : Piece
     {
-        public Bishop(ChessBoardController controller, bool isBlack) : base(controller, isBlack)
+        public Bishop(ChessBoardController controller, PiecesMoveableCells MoveableCellsMarker, bool isBlack)
+            : base(controller, MoveableCellsMarker, isBlack)
         {
             if (isBlack)
                 Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackBishop) };

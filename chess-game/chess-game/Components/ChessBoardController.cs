@@ -25,6 +25,8 @@ namespace chess_game.Components
         /// </summary>
         public readonly List<List<Piece>> PiecesMatrix = new();
 
+        private readonly PiecesMoveableCells MoveableCellsMarker;
+
         #endregion
 
         #region Initialize
@@ -37,6 +39,8 @@ namespace chess_game.Components
         {
             ParentChessBoard = parentChessBoard;
             InitRowsAndColumnsPiecesMatrix();
+
+            MoveableCellsMarker = new(this);
         }
 
         /// <summary>
@@ -68,45 +72,45 @@ namespace chess_game.Components
         {
             for (int pawnCount = 0; pawnCount < 8; ++pawnCount)
             {
-                AddPiece(new Pawn(this, true), 1, pawnCount);
-                AddPiece(new Pawn(this, false), 6, pawnCount);
+                AddPiece(new Pawn(this, MoveableCellsMarker, true), 1, pawnCount);
+                AddPiece(new Pawn(this, MoveableCellsMarker, false), 6, pawnCount);
             }
         }
 
         public void InitRooks()
         {
-            AddPiece(new Rook(this, true), 0, 0);
-            AddPiece(new Rook(this, true), 0, 7);
-            AddPiece(new Rook(this, false), 7, 0);
-            AddPiece(new Rook(this, false), 7, 7);
+            AddPiece(new Rook(this, MoveableCellsMarker, true), 0, 0);
+            AddPiece(new Rook(this, MoveableCellsMarker, true), 0, 7);
+            AddPiece(new Rook(this, MoveableCellsMarker, false), 7, 0);
+            AddPiece(new Rook(this, MoveableCellsMarker, false), 7, 7);
         }
 
         public void InitKnights()
         {
-            AddPiece(new Knight(this, true), 0, 1);
-            AddPiece(new Knight(this, true), 0, 6);
-            AddPiece(new Knight(this, false), 7, 1);
-            AddPiece(new Knight(this, false), 7, 6);
+            AddPiece(new Knight(this, MoveableCellsMarker, true), 0, 1);
+            AddPiece(new Knight(this, MoveableCellsMarker, true), 0, 6);
+            AddPiece(new Knight(this, MoveableCellsMarker, false), 7, 1);
+            AddPiece(new Knight(this, MoveableCellsMarker, false), 7, 6);
         }
 
         public void InitBishops()
         {
-            AddPiece(new Bishop(this, true), 0, 2);
-            AddPiece(new Bishop(this, true), 0, 5);
-            AddPiece(new Bishop(this, false), 7, 2);
-            AddPiece(new Bishop(this, false), 7, 5);
+            AddPiece(new Bishop(this, MoveableCellsMarker, true), 0, 2);
+            AddPiece(new Bishop(this, MoveableCellsMarker, true), 0, 5);
+            AddPiece(new Bishop(this, MoveableCellsMarker, false), 7, 2);
+            AddPiece(new Bishop(this, MoveableCellsMarker, false), 7, 5);
         }
 
         public void InitQueens()
         {
-            AddPiece(new Queen(this, true), 0, 3);
-            AddPiece(new Queen(this, false), 7, 3);
+            AddPiece(new Queen(this, MoveableCellsMarker, true), 0, 3);
+            AddPiece(new Queen(this, MoveableCellsMarker, false), 7, 3);
         }
 
         public void InitKings()
         {
-            AddPiece(new King(this, true), 0, 4);
-            AddPiece(new King(this, false), 7, 4);
+            AddPiece(new King(this, MoveableCellsMarker, true), 0, 4);
+            AddPiece(new King(this, MoveableCellsMarker, false), 7, 4);
         }
 
         #endregion
@@ -123,7 +127,7 @@ namespace chess_game.Components
         {
             PiecesOnBoard.Add(piece);
             ParentChessBoard.AddElement(piece, row, col);
-            PlacePiece(piece, row, col);
+            PlacePiece(piece, row, col, true);
         }
 
         /// <summary>
@@ -132,10 +136,10 @@ namespace chess_game.Components
         /// <param name="piece">piece to place</param>
         /// <param name="row">Row index</param>
         /// <param name="col">Column index</param>
-        public void PlacePiece(Piece piece, int row, int col)
+        public void PlacePiece(Piece piece, int row, int col, bool isInitMove = false)
         {
             PiecesMatrix[row][col] = piece;
-            piece.SetRowColumnPosition(row, col);
+            piece.SetRowColumnPosition(row, col, isInitMove);
             ParentChessBoard.PlaceElement(piece, row, col);
         }
 

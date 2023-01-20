@@ -12,7 +12,8 @@ namespace chess_game.Components.Pieces
 {
     sealed class Rook : Piece
     {
-        public Rook(ChessBoardController controller, bool isBlack) : base(controller, isBlack)
+        public Rook(ChessBoardController controller, PiecesMoveableCells MoveableCellsMarker, bool isBlack)
+            : base(controller, MoveableCellsMarker, isBlack)
         {
             if (isBlack)
                 Content = new Image() { Source = new BitmapImage(PieceImageIcon.BlackRook) };

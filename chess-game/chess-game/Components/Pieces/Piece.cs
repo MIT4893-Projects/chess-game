@@ -8,13 +8,17 @@ namespace chess_game.Components.Pieces
     internal class Piece : ToggleButton
     {
         public readonly bool IsBlackTeam;
+        protected bool FirstMovePerformedProperty = false;
+        public bool FirstMovePerformed { get => FirstMovePerformedProperty; }
         protected readonly ChessBoardController Controller;
+        protected readonly PiecesMoveableCells MoveableCellsMarker;
         public int RowPosition { get; private set; } = 0;
         public int ColumnPosition { get; private set; } = 0;
 
-        public Piece(ChessBoardController parentChessBoardController, bool isBlack)
+        public Piece(ChessBoardController parentChessBoardController, PiecesMoveableCells moveableCellsMarker, bool isBlack)
         {
             Controller = parentChessBoardController;
+            MoveableCellsMarker = moveableCellsMarker;
             IsBlackTeam = isBlack;
 
             StyleModifier.MakeCornersSquare(this);
@@ -25,24 +29,28 @@ namespace chess_game.Components.Pieces
             Click += OnClick;
         }
 
-        public void SetRowPosition(int value)
+        public void SetRowPosition(int value, bool isInitSetPosition = false)
         {
+            if (!isInitSetPosition)
+                FirstMovePerformedProperty = true;
             if (0 <= value && value < 8)
                 RowPosition = value;
             Grid.SetRow(this, RowPosition);
         }
 
-        public void SetColumnPosition(int value)
+        public void SetColumnPosition(int value, bool isInitSetPosition = false)
         {
+            if (!isInitSetPosition)
+                FirstMovePerformedProperty = true;
             if (0 <= value && value < 8)
                 ColumnPosition = value;
             Grid.SetColumn(this, ColumnPosition);
         }
 
-        public void SetRowColumnPosition(int row, int col)
+        public void SetRowColumnPosition(int row, int col, bool isInitSetPosition = false)
         {
-            SetRowPosition(row);
-            SetColumnPosition(col);
+            SetRowPosition(row, isInitSetPosition);
+            SetColumnPosition(col, isInitSetPosition);
         }
 
         #region Event handlers
