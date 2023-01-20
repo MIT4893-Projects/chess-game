@@ -16,6 +16,8 @@ namespace chess_game.Components
         private int PieceIsWaitingForMoveRowIndex = -1;
         private int PieceIsWaitingForMoveColIndex = -1;
 
+        private HashSet<string> WaitingPieceValidMoves;
+
         private readonly ChessBoard ParentChessBoard;
 
         private readonly List<Piece> PiecesOnBoard = new();
@@ -186,7 +188,14 @@ namespace chess_game.Components
         {
             PieceIsWaitingForMoveRowIndex = pieceRowIndex;
             PieceIsWaitingForMoveColIndex = pieceColIndex;
-            MarkAllOtherPiecesNotChecked(pieceRowIndex, pieceColIndex);
+            WaitingPieceValidMoves = MoveableCellsMarker.PieceMoveableCells(pieceRowIndex, pieceColIndex);
+
+            MarkAllOtherPiecesNotChecked();
+        }
+
+        private void MarkAllOtherPiecesNotChecked()
+        {
+            MarkAllOtherPiecesNotChecked(PieceIsWaitingForMoveRowIndex, PieceIsWaitingForMoveColIndex);
         }
 
         /// <summary>
@@ -222,18 +231,28 @@ namespace chess_game.Components
         /// <param name="targetCellColPosition">Column index of target opponent's piece</param>
         public void RequestCapturePieceAtCell(int targetCellRowPosition, int targetCellColPosition)
         {
-            RemovePiece(targetCellRowPosition, targetCellColPosition);
-            RequestMovePieceToCell(targetCellRowPosition, targetCellColPosition);
+            if (IsAValidMove(targetCellRowPosition, targetCellColPosition))
+            {
+                RemovePiece(targetCellRowPosition, targetCellColPosition);
+                RequestMovePieceToCell(targetCellRowPosition, targetCellColPosition);
+            }
+            MarkAllOtherPiecesNotChecked();
+        }
+
+        private bool IsAValidMove(int targetCellRowPosition, int targetCellColPosition)
+        {
+            string targetCell = new MoveableCell() { Row = targetCellRowPosition, Column = targetCellColPosition }.ToString();
+            return WaitingPieceValidMoves.Contains(targetCell);
         }
 
         /// <summary>
-        /// Move waiting piece to triggerred cell.
+        /// Move waiting piece to triggerred cell if there is a waiting piece and that move is accepted.
         /// </summary>
         /// <param name="targetCellRowPosition">Triggerred's cell row position</param>
         /// <param name="targetCellColPosition">Triggerred's cell column position</param>
         public void RequestMovePieceToCell(int targetCellRowPosition, int targetCellColPosition)
         {
-            if (HaveWaitingPiece())
+            if (HaveWaitingPiece() && IsAValidMove(targetCellRowPosition, targetCellColPosition))
             {
                 MovePiece(targetCellRowPosition, targetCellColPosition);
                 MarkThisPieceNotCheckedAfterMove(targetCellRowPosition, targetCellColPosition);
