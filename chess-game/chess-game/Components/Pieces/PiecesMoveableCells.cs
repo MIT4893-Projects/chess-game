@@ -110,6 +110,13 @@ namespace chess_game.Components.Pieces
             }
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cell the piece can move to.
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <param name="verticalFactors"></param>
+        /// <param name="horizontalFactors"></param>
+        /// <returns></returns>
         private HashSet<string> MakeListOfCellFarMovePiece(Piece piece, int[] verticalFactors, int[] horizontalFactors)
         {
             HashSet<string> moveableCells = new();
@@ -131,6 +138,13 @@ namespace chess_game.Components.Pieces
             return moveableCells;
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cell the piece can move to.
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <param name="verticalFactors"></param>
+        /// <param name="horizontalFactors"></param>
+        /// <returns></returns>
         private HashSet<string> MakeListOfCellShortMovePiece(Piece piece, int[] verticalFactors, int[] horizontalFactors)
         {
             HashSet<string> moveableCells = new();
@@ -149,6 +163,11 @@ namespace chess_game.Components.Pieces
             return moveableCells;
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cells the pawn can move to.
+        /// </summary>
+        /// <param name="pawnPiece"></param>
+        /// <returns></returns>
         private HashSet<string> PawnMoveableCells(Piece pawnPiece)
         {
             HashSet<string> moveableCells = new();
@@ -177,6 +196,11 @@ namespace chess_game.Components.Pieces
             return moveableCells;
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cells the rook can move to.
+        /// </summary>
+        /// <param name="rookPiece"></param>
+        /// <returns></returns>
         private HashSet<string> RookMoveableCells(Piece rookPiece)
         {
             //! Rook's row and col positions after moves.
@@ -186,6 +210,11 @@ namespace chess_game.Components.Pieces
             return MakeListOfCellFarMovePiece(rookPiece, verticalFactors, horizontalFactors);
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cells the knight can move to.
+        /// </summary>
+        /// <param name="knightPiece"></param>
+        /// <returns></returns>
         private HashSet<string> KnightMoveableCells(Piece knightPiece)
         {
             //! Knight's row and col positions after move.
@@ -195,6 +224,11 @@ namespace chess_game.Components.Pieces
             return MakeListOfCellShortMovePiece(knightPiece, verticalFactors, horizontalFactors);
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cells the bishop can move to.
+        /// </summary>
+        /// <param name="bishopPiece"></param>
+        /// <returns></returns>
         private HashSet<string> BishopMoveableCells(Piece bishopPiece)
         {
             //! Bishop's row and col positions after moves.
@@ -204,6 +238,11 @@ namespace chess_game.Components.Pieces
             return MakeListOfCellFarMovePiece(bishopPiece, verticalFactors, horizontalFactors);
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cells the king can move to.
+        /// </summary>
+        /// <param name="kingPiece"></param>
+        /// <returns></returns>
         private HashSet<string> KingMoveableCells(Piece kingPiece)
         {
             //! King's row and col positions after moves.
@@ -213,6 +252,11 @@ namespace chess_game.Components.Pieces
             return MakeListOfCellShortMovePiece(kingPiece, verticalFactors, horizontalFactors);
         }
 
+        /// <summary>
+        /// Return a HashSet contains all cells the queen can move to.
+        /// </summary>
+        /// <param name="queenPiece"></param>
+        /// <returns></returns>
         private HashSet<string> QueenMoveableCells(Piece queenPiece)
         {
             //! Queen's row and col positions after moves.
@@ -222,6 +266,11 @@ namespace chess_game.Components.Pieces
             return MakeListOfCellFarMovePiece(queenPiece, verticalFactors, horizontalFactors);
         }
 
+        /// <summary>
+        /// Auto choose between pieces's moves and return all cells the piece can move to.
+        /// </summary>
+        /// <param name="pieceIsRequestingToMove"></param>
+        /// <returns></returns>
         public HashSet<string> PieceMoveableCells(Piece pieceIsRequestingToMove)
         {
             // Type tester
@@ -237,6 +286,12 @@ namespace chess_game.Components.Pieces
             };
         }
 
+        /// <summary>
+        /// Overload for index arguments.
+        /// </summary>
+        /// <param name="pieceIsWaitingRow"></param>
+        /// <param name="pieceIsWaitingCol"></param>
+        /// <returns></returns>
         public HashSet<string> PieceMoveableCells(int pieceIsWaitingRow, int pieceIsWaitingCol)
         {
             return PieceMoveableCells(PiecesMatrix[pieceIsWaitingRow][pieceIsWaitingCol]);
