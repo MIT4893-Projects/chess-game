@@ -14,31 +14,139 @@ namespace chess_game.Components.Pieces
         private readonly ChessBoardController Controller;
         private List<List<Piece>> PiecesMatrix { get => Controller.PiecesMatrix; }
 
+        #region Initialize
+
         public PiecesMoveableCells(ChessBoardController controller)
         {
             Controller = controller;
         }
 
+        #endregion
+
+        /// <summary>
+        /// Check a index is valid.
+        /// </summary>
+        /// <param name="index">Index to check</param>
+        /// <returns>A boolean represents is index valids or not</returns>
         private bool IsIndexValid(int index)
         {
             return 0 <= index && index < 8;
         }
 
+        /// <summary>
+        /// Check a row and column index are valid, based on IsIndexValid.
+        /// </summary>
+        /// <param name="rowIndex">Row's index to check</param>
+        /// <param name="columnIndex">Column's index to check</param>
+        /// <returns>A boolean represents are row and column indexes are both valid</returns>
         private bool IsRowAndColValid(int rowIndex, int columnIndex)
         {
             return IsIndexValid(rowIndex) && IsIndexValid(columnIndex);
         }
 
+        /// <summary>
+        /// Convert a cell's row index and column index to string for store in HashSet.
+        /// </summary>
+        /// <param name="row">Cell's row index</param>
+        /// <param name="column">Cell's column index</param>
+        /// <returns></returns>
         private string GetCellString(int row, int column)
         {
-            return new MoveableCell() { Row = row, Column = column }.ToString();
+            return $"{row} {column}";
         }
-
+        
+        /// <summary>
+        /// Check a target cell is opponent or teammate or empty.
+        /// </summary>
+        /// <param name="piece">Piece to get the team information to check.</param>
+        /// <param name="targetRowIndex">Target row's index</param>
+        /// <param name="targetColIndex">Target column's index</param>
+        /// <returns>True when target cell is opponent, false when target cell is teammate, null when target cell is empty</returns>
         private bool? IsTargetCellIsOpponent(Piece piece, int targetRowIndex, int targetColIndex)
         {
             if (PiecesMatrix[targetRowIndex][targetColIndex] == null)
                 return null;
             return piece.IsBlackTeam != PiecesMatrix[targetRowIndex][targetColIndex].IsBlackTeam;
+        }
+
+        /// <summary>
+        /// Add a move for a far move piece.
+        /// </summary>
+        /// <param name="moveableCells">HashSet stores cells the piece can move to</param>
+        /// <param name="piece">Piece is waiting for move</param>
+        /// <param name="rowIndex">Target cell's row index</param>
+        /// <param name="colIndex">Target cell's column index</param>
+        /// <returns></returns>
+        private bool FarMovePieceCellCheck(HashSet<string> moveableCells, Piece piece, int rowIndex, int colIndex)
+        {
+            switch (IsTargetCellIsOpponent(piece, rowIndex, colIndex))
+            {
+                case true:
+                    moveableCells.Add(GetCellString(rowIndex, colIndex));
+                    return false;
+                case false:
+                    return false;
+                default:
+                    moveableCells.Add(GetCellString(rowIndex, colIndex));
+                    return true;
+            }
+        }
+
+        /// <summary>
+        /// Add a move for a short move piece.
+        /// </summary>
+        /// <param name="moveableCells">HashSet stores cells the piece can move to</param>
+        /// <param name="piece">Piece is waiting for move</param>
+        /// <param name="rowIndex">Target cell's row index</param>
+        /// <param name="colIndex">Target cell's column index</param>
+        private void ShortMovePieceCellCheck(HashSet<string> moveableCells, Piece piece, int rowIndex, int colIndex)
+        {
+            switch (IsTargetCellIsOpponent(piece, rowIndex, colIndex))
+            {
+                case true:
+                case null:
+                    moveableCells.Add(GetCellString(rowIndex, colIndex));
+                    return;
+            }
+        }
+
+        private HashSet<string> MakeListOfCellFarMovePiece(Piece piece, int[] verticalFactors, int[] horizontalFactors)
+        {
+            HashSet<string> moveableCells = new();
+
+            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            {
+                int targetCellRowPosition = piece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = piece.ColumnPosition + horizontalFactors[factorIdx];
+                bool canContinueMove = true;
+                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
+                {
+                    canContinueMove = FarMovePieceCellCheck(moveableCells, piece, targetCellRowPosition,
+                                                            targetCellColPosition);
+                    targetCellRowPosition += verticalFactors[factorIdx];
+                    targetCellColPosition += horizontalFactors[factorIdx];
+                }
+            }
+
+            return moveableCells;
+        }
+
+        private HashSet<string> MakeListOfCellShortMovePiece(Piece piece, int[] verticalFactors, int[] horizontalFactors)
+        {
+            HashSet<string> moveableCells = new();
+
+            for (int factorIdx = 0; factorIdx < horizontalFactors.Length; ++factorIdx)
+            {
+                int targetCellRowPosition = piece.RowPosition + verticalFactors[factorIdx];
+                int targetCellColPosition = piece.ColumnPosition + horizontalFactors[factorIdx];
+
+                if (IsRowAndColValid(targetCellRowPosition, targetCellColPosition))
+                {
+                    ShortMovePieceCellCheck(moveableCells, piece, targetCellRowPosition, targetCellColPosition);
+                }
+            }
+
+            return moveableCells;
         }
 
         private HashSet<string> PawnMoveableCells(Piece pawnPiece)
@@ -47,213 +155,71 @@ namespace chess_game.Components.Pieces
 
             bool PieceIsBlack = pawnPiece.IsBlackTeam;
 
+            //! Pawn's row and col positions after moves.
+            int[] verticalFactors = { 1, -1, 0, 0 };
+            int[] horizontalFactors = { 0, 0, 1, -1 };
+
             // Black goes down, white goes up by setting this factor.
             int verticalFactor = (PieceIsBlack) ? 1 : -1;
 
-            int PawnRow = pawnPiece.RowPosition;
-            int PawnCol = pawnPiece.ColumnPosition;
+            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            {
+                int targetCellRowPosition = pawnPiece.RowPosition + verticalFactors[factorIdx] * verticalFactor;
+                int targetCellColPosition = pawnPiece.ColumnPosition + horizontalFactors[factorIdx] * verticalFactor;
+                ShortMovePieceCellCheck(moveableCells, pawnPiece, targetCellRowPosition, targetCellColPosition);
+            }
 
-            // If on bottom edge, can't move to anywhere. So return empty list.
-            if (PawnRow == ((PieceIsBlack) ? 7 : 0))
-                return moveableCells;
-
-            int FrontSquareRow = PawnRow + 1 * verticalFactor;
-            // Pawns can only move forward one square at a time, and the cell in front don't have any pieces.
-            if (IsIndexValid(FrontSquareRow))
-                if (IsTargetCellIsOpponent(pawnPiece, FrontSquareRow, PawnCol) == null)
-                {
-                    moveableCells.Add(GetCellString(FrontSquareRow, PawnCol));
-
-                    // If this is the first move, the pawns can move forward up to two squares.
-                    if (!pawnPiece.FirstMovePerformed)
-                    {
-                        if (IsTargetCellIsOpponent(pawnPiece, PawnRow + 2 * verticalFactor, PawnCol) == null)
-                            moveableCells.Add(GetCellString(PawnRow + 2 * verticalFactor, PawnCol));
-                    }
-                }
-
-            // Pawns can capture one of two squares diagonally in front of them.
-            int DiagonalLeftSquareCol = PawnCol - 1;
-            int DiagonalRightSquareCol = PawnCol + 1;
-
-            if (DiagonalLeftSquareCol >= 0)
-                if (IsTargetCellIsOpponent(pawnPiece, FrontSquareRow, DiagonalLeftSquareCol) == true)
-                    moveableCells.Add(GetCellString(FrontSquareRow, DiagonalLeftSquareCol));
-
-            if (DiagonalRightSquareCol < 8)
-                if (IsTargetCellIsOpponent(pawnPiece, FrontSquareRow, DiagonalRightSquareCol) == true)
-                    moveableCells.Add(GetCellString(FrontSquareRow, DiagonalRightSquareCol));
+            if (!pawnPiece.FirstMovePerformed)
+            {
+                ShortMovePieceCellCheck(moveableCells, pawnPiece, pawnPiece.RowPosition + 2, pawnPiece.ColumnPosition);
+            }
 
             return moveableCells;
         }
 
         private HashSet<string> RookMoveableCells(Piece rookPiece)
         {
-            HashSet<string> moveableCells = new();
-
             //! Rook's row and col positions after moves.
             int[] verticalFactors = { 1, -1, 0, 0 };
             int[] horizontalFactors = { 0, 0, 1, -1 };
 
-            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
-            {
-                int targetCellRowPosition = rookPiece.RowPosition + verticalFactors[factorIdx];
-                int targetCellColPosition = rookPiece.ColumnPosition + horizontalFactors[factorIdx];
-                bool canContinueMove = true;
-                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
-                {
-                    switch (IsTargetCellIsOpponent(rookPiece, targetCellRowPosition, targetCellColPosition))
-                    {
-                        case true:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            canContinueMove = false;
-                            break;
-                        case false:
-                            canContinueMove = false;
-                            break;
-                        default:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            break;
-                    }
-                    targetCellRowPosition += verticalFactors[factorIdx];
-                    targetCellColPosition += horizontalFactors[factorIdx];
-                }
-            }
-
-            return moveableCells;
+            return MakeListOfCellFarMovePiece(rookPiece, verticalFactors, horizontalFactors);
         }
 
         private HashSet<string> KnightMoveableCells(Piece knightPiece)
         {
-            HashSet<string> moveableCells = new();
-
             //! Knight's row and col positions after move.
-            int[] horizontalFactors = { -2, -2, -1, -1, 1, 1, 2, 2 };
             int[] verticalFactors = { 1, -1, 2, -2, 2, -2, 1, -1 };
+            int[] horizontalFactors = { -2, -2, -1, -1, 1, 1, 2, 2 };
 
-            for (int factorIdx = 0; factorIdx < horizontalFactors.Length; ++factorIdx)
-            {
-                int targetCellRowPosition = knightPiece.RowPosition + verticalFactors[factorIdx];
-                int targetCellColPosition = knightPiece.ColumnPosition + horizontalFactors[factorIdx];
-
-                if (IsRowAndColValid(targetCellRowPosition, targetCellColPosition))
-                {
-                    switch (IsTargetCellIsOpponent(knightPiece, targetCellRowPosition, targetCellColPosition))
-                    {
-                        case true:
-                        case null:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            break;
-                        case false:
-                            break;
-                    }
-                }
-            }
-
-            return moveableCells;
+            return MakeListOfCellShortMovePiece(knightPiece, verticalFactors, horizontalFactors);
         }
 
         private HashSet<string> BishopMoveableCells(Piece bishopPiece)
         {
-            HashSet<string> moveableCells = new();
-
             //! Bishop's row and col positions after moves.
             int[] verticalFactors = { 1, -1, -1, 1 };
             int[] horizontalFactors = { 1, -1, 1, -1 };
 
-            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
-            {
-                bool canContinueMove = true;
-                int targetCellRowPosition = bishopPiece.RowPosition + verticalFactors[factorIdx];
-                int targetCellColPosition = bishopPiece.ColumnPosition + horizontalFactors[factorIdx];
-                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
-                {
-                    switch (IsTargetCellIsOpponent(bishopPiece, targetCellRowPosition, targetCellColPosition))
-                    {
-                        case true:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            canContinueMove = false;
-                            break;
-                        case false:
-                            canContinueMove = false;
-                            break;
-                        default:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            break;
-                    }
-                    targetCellRowPosition += verticalFactors[factorIdx];
-                    targetCellColPosition += horizontalFactors[factorIdx];
-                }
-            }
-
-            return moveableCells;
+            return MakeListOfCellFarMovePiece(bishopPiece, verticalFactors, horizontalFactors);
         }
 
         private HashSet<string> KingMoveableCells(Piece kingPiece)
         {
-            HashSet<string> moveableCells = new();
-
             //! King's row and col positions after moves.
             int[] verticalFactors = { -1, -1, 0, 1, 1, 1, 0, -1 };
             int[] horizontalFactors = { 0, 1, 1, 1, 0, -1, -1, -1 };
 
-            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
-            {
-                int targetCellRowPosition = kingPiece.RowPosition + verticalFactors[factorIdx];
-                int targetCellColPosition = kingPiece.ColumnPosition + horizontalFactors[factorIdx];
-
-                if (IsRowAndColValid(targetCellRowPosition, targetCellColPosition))
-                {
-                    switch (IsTargetCellIsOpponent(kingPiece, targetCellRowPosition, targetCellColPosition))
-                    {
-                        case true:
-                        case null:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            break;
-                        case false:
-                            break;
-                    }
-                }
-            }
-
-            return moveableCells;
+            return MakeListOfCellShortMovePiece(kingPiece, verticalFactors, horizontalFactors);
         }
 
         private HashSet<string> QueenMoveableCells(Piece queenPiece)
         {
-            HashSet<string> moveableCells = new();
-
             //! Queen's row and col positions after moves.
             int[] verticalFactors = { -1, -1, 0, 1, 1, 1, 0, -1 };
             int[] horizontalFactors = { 0, 1, 1, 1, 0, -1, -1, -1 };
 
-            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
-            {
-                bool canContinueMove = true;
-                int targetCellRowPosition = queenPiece.RowPosition + verticalFactors[factorIdx];
-                int targetCellColPosition = queenPiece.ColumnPosition + horizontalFactors[factorIdx];
-
-                while (IsRowAndColValid(targetCellRowPosition, targetCellColPosition) && canContinueMove)
-                {
-                    switch (IsTargetCellIsOpponent(queenPiece, targetCellRowPosition, targetCellColPosition))
-                    {
-                        case true:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            canContinueMove = false;
-                            break;
-                        case false:
-                            canContinueMove = false;
-                            break;
-                        default:
-                            moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
-                            break;
-                    }
-                    targetCellRowPosition += verticalFactors[factorIdx];
-                    targetCellColPosition += horizontalFactors[factorIdx];
-                }
-            }
-
-            return moveableCells;
+            return MakeListOfCellFarMovePiece(queenPiece, verticalFactors, horizontalFactors);
         }
 
         public HashSet<string> PieceMoveableCells(Piece pieceIsRequestingToMove)
