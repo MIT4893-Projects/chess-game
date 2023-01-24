@@ -54,7 +54,7 @@ namespace chess_game.Components.Pieces
         {
             return $"{row} {column}";
         }
-        
+
         /// <summary>
         /// Check a target cell is opponent or teammate or empty.
         /// </summary>
@@ -79,17 +79,21 @@ namespace chess_game.Components.Pieces
         /// <returns></returns>
         private bool FarMovePieceCellCheck(HashSet<string> moveableCells, Piece piece, int rowIndex, int colIndex)
         {
-            switch (IsTargetCellIsOpponent(piece, rowIndex, colIndex))
+            if (IsRowAndColValid(rowIndex, colIndex))
             {
-                case true:
-                    moveableCells.Add(GetCellString(rowIndex, colIndex));
-                    return false;
-                case false:
-                    return false;
-                default:
-                    moveableCells.Add(GetCellString(rowIndex, colIndex));
-                    return true;
+                switch (IsTargetCellIsOpponent(piece, rowIndex, colIndex))
+                {
+                    case true:
+                        moveableCells.Add(GetCellString(rowIndex, colIndex));
+                        return false;
+                    case false:
+                        return false;
+                    default:
+                        moveableCells.Add(GetCellString(rowIndex, colIndex));
+                        break;
+                }
             }
+            return true;
         }
 
         /// <summary>
@@ -101,12 +105,17 @@ namespace chess_game.Components.Pieces
         /// <param name="colIndex">Target cell's column index</param>
         private void ShortMovePieceCellCheck(HashSet<string> moveableCells, Piece piece, int rowIndex, int colIndex)
         {
-            switch (IsTargetCellIsOpponent(piece, rowIndex, colIndex))
+            if (IsRowAndColValid(rowIndex, colIndex))
             {
-                case true:
-                case null:
-                    moveableCells.Add(GetCellString(rowIndex, colIndex));
-                    return;
+                switch (IsTargetCellIsOpponent(piece, rowIndex, colIndex))
+                {
+                    case true:
+                    case null:
+                        moveableCells.Add(GetCellString(rowIndex, colIndex));
+                        return;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -170,27 +179,41 @@ namespace chess_game.Components.Pieces
         /// <returns></returns>
         private HashSet<string> PawnMoveableCells(Piece pawnPiece)
         {
-            HashSet<string> moveableCells = new();
-
             bool PieceIsBlack = pawnPiece.IsBlackTeam;
 
             //! Pawn's row and col positions after moves.
-            int[] verticalFactors = { 1, -1, 0, 0 };
-            int[] horizontalFactors = { 0, 0, 1, -1 };
+            int[] verticalFactors = { 1, 1 };
+            int[] horizontalFactors = { 1, -1 };
 
             // Black goes down, white goes up by setting this factor.
             int verticalFactor = (PieceIsBlack) ? 1 : -1;
 
-            for (int factorIdx = 0; factorIdx < verticalFactors.Length; ++factorIdx)
+            HashSet<string> moveableCells = new();
+
+            for (int factorIdx = 0; factorIdx < horizontalFactors.Length; ++factorIdx)
             {
                 int targetCellRowPosition = pawnPiece.RowPosition + verticalFactors[factorIdx] * verticalFactor;
                 int targetCellColPosition = pawnPiece.ColumnPosition + horizontalFactors[factorIdx] * verticalFactor;
-                ShortMovePieceCellCheck(moveableCells, pawnPiece, targetCellRowPosition, targetCellColPosition);
+
+                if (IsRowAndColValid(targetCellRowPosition, targetCellColPosition))
+                    if (IsTargetCellIsOpponent(pawnPiece, targetCellRowPosition, targetCellColPosition) == true)
+                        moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
             }
 
-            if (!pawnPiece.FirstMovePerformed)
+            if (IsTargetCellIsOpponent(pawnPiece, pawnPiece.RowPosition + 1 * verticalFactor, pawnPiece.ColumnPosition) == null)
             {
-                ShortMovePieceCellCheck(moveableCells, pawnPiece, pawnPiece.RowPosition + 2, pawnPiece.ColumnPosition);
+                moveableCells.Add(GetCellString(pawnPiece.RowPosition + 1 * verticalFactor, pawnPiece.ColumnPosition));
+
+                if (!pawnPiece.FirstMovePerformed)
+                {
+                    int targetCellRowPosition = pawnPiece.RowPosition + 2 * verticalFactor;
+                    int targetCellColPosition = pawnPiece.ColumnPosition;
+
+                    if (IsTargetCellIsOpponent(pawnPiece, targetCellRowPosition, targetCellColPosition) == null)
+                    {
+                        moveableCells.Add(GetCellString(targetCellRowPosition, targetCellColPosition));
+                    }
+                }
             }
 
             return moveableCells;
