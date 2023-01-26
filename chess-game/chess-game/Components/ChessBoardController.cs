@@ -16,6 +16,8 @@ namespace chess_game.Components
         private int PieceIsWaitingForMoveRowIndex = -1;
         private int PieceIsWaitingForMoveColIndex = -1;
 
+        private bool IsBlackMove;
+
         private HashSet<string> WaitingPieceValidMoves;
 
         private readonly ChessBoard ParentChessBoard;
@@ -68,6 +70,8 @@ namespace chess_game.Components
             InitBishops();
             InitQueens();
             InitKings();
+
+            IsBlackMove = false;
         }
 
         public void InitPawns()
@@ -186,11 +190,16 @@ namespace chess_game.Components
         /// <param name="pieceColIndex">Piece's col index</param>
         public void WaitForMove(int pieceRowIndex, int pieceColIndex)
         {
-            PieceIsWaitingForMoveRowIndex = pieceRowIndex;
-            PieceIsWaitingForMoveColIndex = pieceColIndex;
-            WaitingPieceValidMoves = MoveableCellsMarker.PieceMoveableCells(pieceRowIndex, pieceColIndex);
+            if (PiecesMatrix[pieceRowIndex][pieceColIndex].IsBlackTeam == IsBlackMove)
+            {
+                PieceIsWaitingForMoveRowIndex = pieceRowIndex;
+                PieceIsWaitingForMoveColIndex = pieceColIndex;
+                WaitingPieceValidMoves = MoveableCellsMarker.PieceMoveableCells(pieceRowIndex, pieceColIndex);
 
-            MarkAllOtherPiecesNotChecked();
+                MarkAllOtherPiecesNotChecked();
+            }
+            else
+                MarkAllOtherPiecesNotChecked(-1, -1);
         }
 
         private void MarkAllOtherPiecesNotChecked()
@@ -256,6 +265,7 @@ namespace chess_game.Components
             {
                 MovePiece(targetCellRowPosition, targetCellColPosition);
                 MarkThisPieceNotCheckedAfterMove(targetCellRowPosition, targetCellColPosition);
+                IsBlackMove = !IsBlackMove;
             }
         }
 
