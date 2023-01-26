@@ -8,7 +8,9 @@
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 		<UseWinUI>true</UseWinUI>
+		<PublishSingleFile>true</PublishSingleFile>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<PublishReadyToRun>true</PublishReadyToRun>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Components\Pieces.xaml" />
@@ -71,4 +73,10 @@
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
+
+	<Target Name="_RemoveFrameworkReferences" BeforeTargets="_ConvertItems;_CalculateInputsForGenerateCurrentProjectAppxManifest">
+		<ItemGroup>
+			<FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
+		</ItemGroup>
+	</Target>
 </Project>
